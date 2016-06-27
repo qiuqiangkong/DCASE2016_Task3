@@ -1,0 +1,29 @@
+2016.06.24
+This is sourcecode of DCASE Challenge 2016 Task 3. Details of this challenge can be seen here. http://www.cs.tut.fi/sgn/arg/dcase2016/task-sound-event-detection-in-real-life-audio
+Using Mel + DNN results on development set:
+F value of home on each fold: 28.0%, 28.8%, 22.3%, 37.5%, avg; 29.2%
+F value of resi on each fold: 62.4%, 34.5%, 43.7%, 47.5%; avg; 47.0%
+
+THIS CODE IS BSD LISCENCED. YOU CAN USE AND MODIFY IT AS YOU WISH. 
+AUTHOR: QIUQIANG KONG, q.kong@surrey.ac.uk
+CVSSP, UNIVERSITY OF SURREY
+
+======================================
+
+Pre-requiste:
+librosa
+Hat (https://github.com/qiuqiangkong/Hat)
+
+Usage:
+------ Preparation ------
+1. modify the paths of dataset in config.py, modify paths of HAT in every file. 
+
+------ Train & detect on development datset ------
+1. run prepareData.py 		Calculate features for development data
+2. run main_dnn.py 		Train model on development clips data
+3. run detect.py 		Detect events on development long audio data
+
+------ Detect on Privative Evaluation Data ------ 
+1. run prepareData_eva.py	Calculate features for evaluation data
+2. run main_dnn_eva.py		Train model on all development set
+3. run detect_eva.py		Detect and write out events of evaluation data 
