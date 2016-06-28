@@ -7,7 +7,7 @@ Modified: -
 '''
 import sys
 sys.path.append( '/homes/qkong/my_code2015.5-/python/Hat' )
-sys.path.append( 'activity_detection' )
+sys.path.append( 'activity_detection_lib' )
 import numpy as np
 import config as cfg
 from scikits.audiolab import wavread, wavwrite
@@ -128,12 +128,6 @@ def OutMatToList( scores, thres, id_to_lb ):
                             'event_onset':bgn_fin_pairs[i2]['bgn'] / (44100./1024.), 
                             'event_offset':bgn_fin_pairs[i2]['fin'] / (44100./1024.) } )
     return lists
-
-def WriteOutToTxt( out_path, out_list ):
-    f = open( out_path, 'w' )
-    for li in out_list:
-        f.write( str(li['event_onset']) + '\t' + str(li['event_offset']) + '\t' + li['event_label'] + '\n')
-    f.close()
 
 ### 
 # create an empty folder

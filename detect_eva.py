@@ -7,7 +7,7 @@ Modified: -
 '''
 import sys
 sys.path.append( '/homes/qkong/my_code2015.5-/python/Hat' )
-sys.path.append( 'evaluation' )
+sys.path.append( 'evaluation_lib' )
 import numpy as np
 import config as cfg
 import prepareData as ppData
@@ -25,7 +25,7 @@ from evaluation import *
 
 # hyper-params
 fold = 1        # can be 1,2,3,4
-type = 'home'   # can be 'home' or 'resi'
+type = 'resi'   # can be 'home' or 'resi'
 agg_num = 10
 hop = 1
 thres = 0.99
@@ -51,10 +51,16 @@ md = pickle.load( open( 'Md_eva/md100.p', 'rb' ) )
 names = os.listdir( fe_fd )
 names = sorted( names )
 
+
+fwrite = open('Results_eva/task3_results_' + type + '.txt', 'w')
 for na in names:
     X = cPickle.load( open( fe_fd+'/'+na, 'rb' ) )
     X = mat_2d_to_3d( X, agg_num, hop )
     y_pred = md.predict( X )
     outlist = ppData.OutMatToList( y_pred, thres, id_to_lb )
-    outpath = 'Results_eva/' + na[0:4] + '.txt'
-    ppData.WriteOutToTxt( outpath, outlist )
+    
+    full_na = type + '/audio/' + na[0:4] + '.wav'
+    for li in outlist:
+        fwrite.write( full_na + '\t' + str(li['event_onset']) + '\t' + str(li['event_offset']) + '\t' + li['event_label'] + '\n' )
+
+fwrite.close()

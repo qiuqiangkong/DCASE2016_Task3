@@ -19,9 +19,9 @@ import prepareData_eva as ppData_eva
 
 
 # hyper-params
-type = 'home'   # can be 'home' or 'resi'
+type = 'resi'   # can be 'home' or 'resi'
 agg_num = 10
-hop = 5
+hop = 10
 n_hid = 500
 
 # init path
