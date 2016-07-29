@@ -10,7 +10,7 @@ sys.path.append( '/homes/qkong/my_code2015.5-/python/Hat' )
 sys.path.append( 'activity_detection_lib' )
 import numpy as np
 import config as cfg
-from scikits.audiolab import wavread, wavwrite
+import wavio
 import os
 from scipy import signal
 import librosa
@@ -18,6 +18,13 @@ import cPickle
 import matplotlib.pyplot as plt
 from Hat.preprocessing import mat_2d_to_3d
 from activity_detection import activity_detection
+
+### readwav
+def readwav( path ):
+    Struct = wavio.read( path )
+    wav = Struct.data.astype(float) / np.power(2, Struct.sampwidth*8-1)
+    fs = Struct.rate
+    return wav, fs
 
 ###
 # calculate mel feature
@@ -27,7 +34,7 @@ def GetMel( wav_fd, fe_fd, n_delete ):
     for na in names:
         print na
         path = wav_fd + '/' + na
-        wav, fs, enc = wavread( path )
+        wav, fs = readwav( path )
         if ( wav.ndim==2 ): 
             wav = np.mean( wav, axis=-1 )
         assert fs==cfg.fs
