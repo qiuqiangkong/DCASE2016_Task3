@@ -1,9 +1,8 @@
 # dataset root path
-root = '/homes/qkong/datasets/DCASE2016/Event Detection (real life)'
+root = '/vol/vssp/datasets/audio/dcase2016/task3'
 
 # development data
 meta_txt = root + '/TUT-sound-events-2016-development/meta.txt'
-#root_fd = root + '/TUT-sound-events-2016-development'
 
 meta_home_fd = root + "/TUT-sound-events-2016-development/meta/home"
 meta_resi_fd = root + "/TUT-sound-events-2016-development/meta/residential_area"
@@ -13,6 +12,9 @@ wav_resi_fd = root + '/TUT-sound-events-2016-development/audio/residential_area'
 
 fe_mel_home_fd = 'Fe/Mel/home'
 fe_mel_resi_fd = 'Fe/Mel/residential_area'
+
+development_fd = root + '/TUT-sound-events-2016-development/evaluation_setup'
+results_fd = 'Results'
 
 # privative evaluation data
 eva_ann_fd = ''
@@ -29,7 +31,7 @@ id_to_lb_home = { i:ch for i, ch in enumerate(labels_home) }
 lb_to_id_resi = { ch:i for i, ch in enumerate(labels_resi) }
 id_to_lb_resi = { i:ch for i, ch in enumerate(labels_resi) }
 
-evaluation_fd = '/homes/qkong/datasets/DCASE2016/Event Detection (real life)/TUT-sound-events-2016-development/evaluation_setup'
+
 
 fs = 44100.
 win = 1024.

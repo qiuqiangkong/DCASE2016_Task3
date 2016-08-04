@@ -2,12 +2,11 @@
 SUMMARY:  detect each wav from cross validation
 AUTHOR:   Qiuqiang Kong
 Created:  2016.06.26
-Modified: -
+Modified: 2016.08.04
 --------------------------------------
 '''
 import sys
 sys.path.append( '/homes/qkong/my_code2015.5-/python/Hat' )
-sys.path.append( 'evaluation' )
 import numpy as np
 import config as cfg
 import prepareData as ppData
@@ -15,67 +14,76 @@ from Hat.preprocessing import pad_trunc_seqs, sparse_to_categorical, mat_2d_to_3
 from Hat.models import Sequential
 from Hat.layers.core import InputLayer, Dense, Dropout, Flatten
 from Hat.callbacks import SaveModel, Validation
-from Hat.optimizers import SGD, Rmsprop
+from Hat import serializations
 import Hat.backend as K
 import os
 import cPickle
 import pickle
 import matplotlib.pyplot as plt
-from evaluation import *
+from main_dnn import fold, type, agg_num, hop
 
-# hyper-params
-fold = 1        # can be 1,2,3,4
-type = 'home'   # can be 'home' or 'resi'
-agg_num = 10
-hop = 1
-thres = 0.99
 
-# init paths
-if type=='home':
-    fe_fd = cfg.fe_mel_home_fd
-    labels = cfg.labels_home
-    lb_to_id = cfg.lb_to_id_home
-    id_to_lb = cfg.id_to_lb_home
-    tr_txt = cfg.evaluation_fd + '/home_fold' + str(fold) + '_train.txt'
-    te_txt = cfg.evaluation_fd + '/home_fold' + str(fold) + '_evaluate.txt'
-    meta_fd = cfg.meta_home_fd
-if type=='resi':
-    fe_fd = cfg.fe_mel_resi_fd
-    labels = cfg.labels_resi
-    lb_to_id = cfg.lb_to_id_resi
-    id_to_lb = cfg.id_to_lb_resi
-    tr_txt = cfg.evaluation_fd + '/residential_area_fold' + str(fold) + '_train.txt'
-    te_txt = cfg.evaluation_fd + '/residential_area_fold' + str(fold) + '_evaluate.txt'
-    meta_fd = cfg.meta_resi_fd
+### hyper params
+thres = 0.99    # if probability pass this value, then label as an event
+md_path = 'Md/md20.p'
 
-n_out = len( labels )
 
-# load model
-md = pickle.load( open( 'Md/md100.p', 'rb' ) )
-
-# get wav names to be detected
-te_names = ppData.GetWavNamesFromTxt( te_txt )
-
-# do recognize for each test audio
-names = os.listdir( fe_fd )
-names = sorted( names )
-y_pred_list = []
-
-f_ary = []
-for na in names:
-    if na[0:4] in te_names:
-        print na
-        gt_file = meta_fd + '/' + na[0:4] + '.ann'
-        gt_list = ppData.LoadGtAnn( gt_file )
-        
-        X = cPickle.load( open( fe_fd+'/'+na, 'rb' ) )
-        X = mat_2d_to_3d( X, agg_num, hop )
-        y_pred = md.predict( X )
-        y_pred_list.append( y_pred )
-        output = ppData.OutMatToList( y_pred, thres, id_to_lb )
-        
-        eva = DCASE2016_EventDetection_SegmentBasedMetrics( labels )
-        r = eva.evaluate( gt_list, output ).results()
-        f_ary.append( r['overall']['F'] )
+### detect cross validation test files
+def detect_cv():
+    # init paths
+    if type=='home':
+        fe_fd = cfg.fe_mel_home_fd
+        labels = cfg.labels_home
+        lb_to_id = cfg.lb_to_id_home
+        id_to_lb = cfg.id_to_lb_home
+        tr_txt = cfg.development_fd + '/home_fold' + str(fold) + '_train.txt'
+        te_txt = cfg.development_fd + '/home_fold' + str(fold) + '_evaluate.txt'
+        meta_fd = cfg.meta_home_fd
+    if type=='resi':
+        fe_fd = cfg.fe_mel_resi_fd
+        labels = cfg.labels_resi
+        lb_to_id = cfg.lb_to_id_resi
+        id_to_lb = cfg.id_to_lb_resi
+        tr_txt = cfg.development_fd + '/residential_area_fold' + str(fold) + '_train.txt'
+        te_txt = cfg.development_fd + '/residential_area_fold' + str(fold) + '_evaluate.txt'
+        meta_fd = cfg.meta_resi_fd
     
-print 'avg F value: ', np.mean(f_ary)
+    n_out = len( labels )
+    
+    # load model
+    md = serializations.load( md_path )
+    
+    # get wav names to be detected
+    te_names = ppData.GetWavNamesFromTxt( te_txt )
+    
+    # do recognize for each test audio
+    names = os.listdir( fe_fd )
+    names = sorted( names )
+    y_pred_list = []
+
+    # detect and write out to txt
+    ppData.CreateFolder( cfg.results_fd )
+    file_list = []
+    for na in names:
+        if na[0:4] in te_names:
+            print na
+            gt_file = meta_fd + '/' + na[0:4] + '.ann'
+            out_file = cfg.results_fd + '/'+na[0:4]+'_detect.ann'
+            
+            X = cPickle.load( open( fe_fd+'/'+na, 'rb' ) )
+            X = mat_2d_to_3d( X, agg_num, hop )
+            y_pred = md.predict( X )
+            y_pred_list.append( y_pred )
+            out_list = ppData.OutMatToList( y_pred, thres, id_to_lb )
+            ppData.PrintListToTxt( out_list, out_file )
+            
+            file_list.append( { 'reference_file': gt_file, 'estimated_file': out_file } )
+            
+    # print results for this fold
+    ppData.PrintScore( file_list, labels )
+    
+
+
+### main function
+if __name__ == '__main__':
+    detect_cv()

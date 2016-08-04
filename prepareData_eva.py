@@ -54,6 +54,8 @@ if __name__ == "__main__":
     ppData.CreateFolder( 'Fe_eva/Mel/home' )
     ppData.CreateFolder( 'Fe_eva/Mel/resi' )
     ppData.CreateFolder( 'Results_eva' )
+    ppData.CreateFolder( 'Results_eva/home' )
+    ppData.CreateFolder( 'Results_eva/resi' )
     ppData.CreateFolder( 'Md_eva' )
     
     ppData.GetMel( cfg.eva_wav_home_fd, cfg.eva_fe_mel_home_fd, n_delete=0 )
