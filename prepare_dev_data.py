@@ -2,11 +2,10 @@
 SUMMARY:  prepare data for development data
 AUTHOR:   Qiuqiang Kong
 Created:  2016.06.26
-Modified: -
+Modified: 2016.10.11 Modify variable name
 --------------------------------------
 '''
 import sys
-sys.path.append( '/user/HS229/qk00006/my_code2015.5-/python/Hat' )
 sys.path.append( 'activity_detection_lib' )
 import numpy as np
 import config as cfg
@@ -16,7 +15,7 @@ from scipy import signal
 import librosa
 import cPickle
 import matplotlib.pyplot as plt
-from Hat.preprocessing import mat_2d_to_3d
+from hat.preprocessing import mat_2d_to_3d
 from activity_detection import activity_detection
 import sed_eval
 
@@ -143,6 +142,7 @@ def PrintListToTxt( lists, path ):
     for li in lists:
         f.write( str(li['event_onset']) + '\t' + str(li['event_offset']) + '\t' + li['event_label'] + '\n' )
     f.close()
+    print 'Write out detection result to', path, 'successfully!'
 
 
 ### print score (arranged from http://tut-arg.github.io/sed_eval/tutorial.html)
@@ -164,7 +164,6 @@ def PrintScore( file_list, labels ):
         estimated_event_list = sed_eval.io.load_event_list(file_pair['estimated_file'])
         pairs.append({'reference_event_list': reference_event_list,
                     'estimated_event_list': estimated_event_list})
-    
 
     # Start evaluating
     event_labels = labels
@@ -176,11 +175,11 @@ def PrintScore( file_list, labels ):
                                                                 t_collar=0.250)
     
     # Go through files
-    for file_pair in pairs:
-        segment_based_metrics.evaluate(file_pair['reference_event_list'],
-                                    file_pair['estimated_event_list'])
-        event_based_metrics.evaluate(file_pair['reference_event_list'],
-                                    file_pair['estimated_event_list'])
+    for list_pair in pairs:
+        segment_based_metrics.evaluate(list_pair['reference_event_list'],
+                                    list_pair['estimated_event_list'])
+        event_based_metrics.evaluate(list_pair['reference_event_list'],
+                                    list_pair['estimated_event_list'])
     
     # Get only certain metrics
     overall_segment_based_metrics = segment_based_metrics.results_overall_metrics()
@@ -188,7 +187,7 @@ def PrintScore( file_list, labels ):
     
     # Or print all metrics as reports
     print segment_based_metrics
-    print event_based_metrics
+    #print event_based_metrics
 
 
 ### 
@@ -198,11 +197,11 @@ def CreateFolder( fd ):
         os.makedirs(fd)
         
 if __name__ == "__main__":
-    CreateFolder( 'Fe' )
-    CreateFolder( 'Fe/Mel' )
-    CreateFolder( cfg.fe_mel_home_fd )
-    CreateFolder( cfg.fe_mel_resi_fd )
+    CreateFolder( cfg.dev_fe_fd )
+    CreateFolder( cfg.dev_fe_mel_fd )
+    CreateFolder( cfg.dev_fe_mel_home_fd )
+    CreateFolder( cfg.dev_fe_mel_resi_fd )
     
     # calculate all features
-    GetMel( cfg.wav_home_fd, cfg.fe_mel_home_fd, n_delete=0 )
-    GetMel( cfg.wav_resi_fd, cfg.fe_mel_resi_fd, n_delete=0 )
+    GetMel( cfg.dev_wav_home_fd, cfg.dev_fe_mel_home_fd, n_delete=0 )
+    GetMel( cfg.dev_wav_resi_fd, cfg.dev_fe_mel_resi_fd, n_delete=0 )

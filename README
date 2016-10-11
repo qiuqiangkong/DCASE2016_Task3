@@ -2,27 +2,27 @@
 This is sourcecode of DCASE Challenge 2016 Task 3 (Audio event detection in real life). Details of this challenge can be seen here. http://www.cs.tut.fi/sgn/arg/dcase2016/task-sound-event-detection-in-real-life-audio
 
 THIS CODE IS MIT LISCENCED. 
-AUTHOR: QIUQIANG KONG, q.kong@surrey.ac.uk
+CONTACT: QIUQIANG KONG, q.kong@surrey.ac.uk
 CVSSP, UNIVERSITY OF SURREY
 
 ======================================
 
 Pre-requiste:
-* sed_eval	https://github.com/TUT-ARG/sed_eval	Evaluation toolbox
-* librosa	https://github.com/librosa		Feature extraction toolbox
-* Hat 		https://github.com/qiuqiangkong/Hat	Deep learning toolbox
+* pip install sed_eval		https://github.com/TUT-ARG/sed_eval	Evaluation toolbox
+* pip install librosa		https://github.com/librosa		Feature extraction toolbox
+* pip install hat 		https://qiuqiangkong.github.io/Hat	Deep learning toolbox
 
 Usage:
 ------ Preparation ------
-1. modify the paths of dataset in config.py, modify paths of HAT in every file. 
+* modify the paths of dataset in config.py
 
 ------ Train & detect on development datset ------
-1. run prepareData.py 		Calculate features for development data
-2. run main_dnn.py 		Train model on development clips data
-3. run detect.py 		Detect events on development long audio data
-4. (optional) run show_results_on_all_folds.py		Only after you run all 4 folds you can use this function
+* run prepare_dev_data.py 	Calculate features for development data
+* run main_dev_dnn.py 		Train model on development clips data
+* run detect.py 		Detect events on development long audio data
+* (optional) run show_results_on_all_folds.py		you must run all 4 folds before you use this function
 
 ------ Detect on Privative Evaluation Data ------ 
-1. run prepareData_eva.py	Calculate features for evaluation data
-2. run main_dnn_eva.py		Train model on all development set
-3. run detect_eva.py		Detect and write out events of evaluation data 
+* run prepare_eva_data.py	Calculate features for evaluation data
+* run main_eva_dnn.py		Train model on all development set
+* run main_eva_detect.py	Detect and write out events of evaluation data 

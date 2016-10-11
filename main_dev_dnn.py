@@ -8,25 +8,24 @@ AUTHOR:   Qiuqiang Kong
 Created:  2016.06.10
 Modified: 2016.06.13
           2016.06.26
+          2016.10.11 Modify variable name
 --------------------------------------
 '''
-import sys
-sys.path.append( '/user/HS229/qk00006/my_code2015.5-/python/Hat' )
 import numpy as np
 import config as cfg
-import prepareData as ppData
-from Hat.preprocessing import pad_trunc_seqs, sparse_to_categorical, mat_2d_to_3d
-from Hat.models import Sequential
-from Hat.layers.core import InputLayer, Dense, Dropout, Flatten
-from Hat.callbacks import SaveModel, Validation
-from Hat.optimizers import SGD, Rmsprop, Adam
-import Hat.backend as K
+import prepare_dev_data as pp_dev_data
+from hat.preprocessing import pad_trunc_seqs, sparse_to_categorical, mat_2d_to_3d
+from hat.models import Sequential
+from hat.layers.core import InputLayer, Dense, Dropout, Flatten
+from hat.callbacks import SaveModel, Validation
+from hat.optimizers import Adam
+import hat.backend as K
 
 
 ### hyper-params
 fold = 1        # can be 1,2,3 or 4
 type = 'resi'   # can be 'home' or 'resi'
-agg_num = 10
+agg_num = 11
 hop = 5
 n_hid = 500
 
@@ -35,22 +34,22 @@ n_hid = 500
 def train_cv_model():
     # init path
     if type=='home':
-        fe_fd = cfg.fe_mel_home_fd
+        fe_fd = cfg.dev_fe_mel_home_fd
         labels = cfg.labels_home
         lb_to_id = cfg.lb_to_id_home
-        tr_txt = cfg.development_fd + '/home_fold' + str(fold) + '_train.txt'
-        te_txt = cfg.development_fd + '/home_fold' + str(fold) + '_evaluate.txt'
+        tr_txt = cfg.dev_evaluation_fd + '/home_fold' + str(fold) + '_train.txt'
+        te_txt = cfg.dev_evaluation_fd + '/home_fold' + str(fold) + '_evaluate.txt'
     if type=='resi':
-        fe_fd = cfg.fe_mel_resi_fd
+        fe_fd = cfg.dev_fe_mel_resi_fd
         labels = cfg.labels_resi
         lb_to_id = cfg.lb_to_id_resi
-        tr_txt = cfg.development_fd + '/residential_area_fold' + str(fold) + '_train.txt'
-        te_txt = cfg.development_fd + '/residential_area_fold' + str(fold) + '_evaluate.txt'
+        tr_txt = cfg.dev_evaluation_fd + '/residential_area_fold' + str(fold) + '_train.txt'
+        te_txt = cfg.dev_evaluation_fd + '/residential_area_fold' + str(fold) + '_evaluate.txt'
         
     n_out = len( labels )
     
     # load data to list
-    tr_X, tr_y = ppData.LoadAllData( fe_fd, tr_txt, lb_to_id, agg_num, hop )
+    tr_X, tr_y = pp_dev_data.LoadAllData( fe_fd, tr_txt, lb_to_id, agg_num, hop )
     tr_y = sparse_to_categorical( tr_y, n_out )
     
     print tr_X.shape
@@ -74,22 +73,21 @@ def train_cv_model():
     md.summary()
     
     # optimization method
-    #optimizer = SGD( lr=0.01, rho=0.9 )
     optimizer = Adam(1e-3)
     
     # callbacks (optional)
     # save model every n epoch
-    ppData.CreateFolder( 'Md' )
-    save_model = SaveModel( dump_fd='Md', call_freq=10 )
+    pp_dev_data.CreateFolder( cfg.dev_md_fd )
+    save_model = SaveModel( dump_fd=cfg.dev_md_fd, call_freq=5 )
     
     # validate model every n epoch
-    validation = Validation( tr_x=tr_X, tr_y=tr_y, va_x=None, va_y=None, te_x=None, te_y=None, metric_types=['categorical_error'], call_freq=1, dump_path='validation.p' )
+    validation = Validation( tr_x=tr_X, tr_y=tr_y, va_x=None, va_y=None, te_x=None, te_y=None, metrics=['binary_crossentropy'], call_freq=1, dump_path=None )
     
     # callbacks function
     callbacks = [validation, save_model]
     
     # train model
-    md.fit( x=tr_X, y=tr_y, batch_size=20, n_epoch=101, loss_type='binary_crossentropy', optimizer=optimizer, callbacks=callbacks )
+    md.fit( x=tr_X, y=tr_y, batch_size=20, n_epochs=100, loss_func='binary_crossentropy', optimizer=optimizer, callbacks=callbacks )
 
 
 ### main function

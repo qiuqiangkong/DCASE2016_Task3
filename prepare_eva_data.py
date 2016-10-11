@@ -2,15 +2,15 @@
 SUMMARY:  prepare data for evaluation data
 AUTHOR:   Qiuqiang Kong
 Created:  2016.06.27
-Modified: -
+Modified: modify variable name
 --------------------------------------
 '''
 import os
 import cPickle
 import numpy as np
 import config as cfg
-import prepareData as ppData
-from Hat.preprocessing import mat_2d_to_3d
+import prepare_dev_data as pp_dev_data
+from hat.preprocessing import mat_2d_to_3d
 
 # load training data and label
 def LoadAllData( fe_fd, ann_fd, lb_to_id, agg_num, hop ):
@@ -49,14 +49,10 @@ def LoadAllData( fe_fd, ann_fd, lb_to_id, agg_num, hop ):
     return np.concatenate( Xlist, axis=0 ), np.array( ylist )
 
 if __name__ == "__main__":
-    ppData.CreateFolder( 'Fe_eva' )
-    ppData.CreateFolder( 'Fe_eva/Mel' )
-    ppData.CreateFolder( 'Fe_eva/Mel/home' )
-    ppData.CreateFolder( 'Fe_eva/Mel/resi' )
-    ppData.CreateFolder( 'Results_eva' )
-    ppData.CreateFolder( 'Results_eva/home' )
-    ppData.CreateFolder( 'Results_eva/resi' )
-    ppData.CreateFolder( 'Md_eva' )
+    pp_dev_data.CreateFolder( cfg.eva_fe_fd )
+    pp_dev_data.CreateFolder( cfg.eva_fe_mel_fd )
+    pp_dev_data.CreateFolder( cfg.eva_fe_mel_home_fd )
+    pp_dev_data.CreateFolder( cfg.eva_fe_mel_resi_fd )
     
-    ppData.GetMel( cfg.eva_wav_home_fd, cfg.eva_fe_mel_home_fd, n_delete=0 )
-    ppData.GetMel( cfg.eva_wav_resi_fd, cfg.eva_fe_mel_resi_fd, n_delete=0 )
+    pp_dev_data.GetMel( cfg.eva_wav_home_fd, cfg.eva_fe_mel_home_fd, n_delete=0 )
+    pp_dev_data.GetMel( cfg.eva_wav_resi_fd, cfg.eva_fe_mel_resi_fd, n_delete=0 )
