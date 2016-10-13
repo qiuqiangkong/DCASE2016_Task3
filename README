@@ -10,7 +10,7 @@ CVSSP, UNIVERSITY OF SURREY
 Pre-requiste:
 * pip install sed_eval		Evaluation toolbox
 * pip install librosa		Feature extraction toolbox
-* pip install hat 		https://qiuqiangkong.github.io/Hat	Deep learning toolbox
+* pip install hat 		Deep learning toolbox, https://qiuqiangkong.github.io/Hat
 
 Usage:
 ------ Preparation ------
