@@ -8,8 +8,8 @@ CVSSP, UNIVERSITY OF SURREY
 ======================================
 
 Pre-requiste:
-* pip install sed_eval		https://github.com/TUT-ARG/sed_eval	Evaluation toolbox
-* pip install librosa		https://github.com/librosa		Feature extraction toolbox
+* pip install sed_eval		Evaluation toolbox
+* pip install librosa		Feature extraction toolbox
 * pip install hat 		https://qiuqiangkong.github.io/Hat	Deep learning toolbox
 
 Usage:
